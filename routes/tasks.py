@@ -6,7 +6,7 @@ from schemas.tasks import TaskCreate, TaskOut
 from repositories.tasks import (
     create_task,
     get_task_by_id,
-    delete_task,
+    delete_task_by_id,
 )
 
 router = APIRouter(prefix="/tasks", tags=["Tasks"])
@@ -24,9 +24,8 @@ async def get(task_id: int, session: AsyncSession = Depends(get_session)):
 
 @router.delete("/{task_id}")
 async def delete(task_id: int, session: AsyncSession = Depends(get_session)):
-    task = await get_task_by_id(session, task_id)
-    if not task:
+    deleted = await delete_task_by_id(session, task_id)
+    if not deleted:
         raise HTTPException(status_code=404, detail="Task not found")
 
-    await delete_task(session, task)
     return {"status": "deleted"}

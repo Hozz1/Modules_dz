@@ -16,6 +16,11 @@ async def get_task_by_id(session: AsyncSession, task_id: int) -> Task | None:
     )
     return result.scalar_one_or_none()
 
-async def delete_task(session: AsyncSession, task: Task) -> None:
+async def delete_task_by_id(session: AsyncSession, task_id: int) -> bool:
+    task = await get_task_by_id(session, task_id)
+    if not task:
+        return False
+
     await session.delete(task)
     await session.commit()
+    return True
